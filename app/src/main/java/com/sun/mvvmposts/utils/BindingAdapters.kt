@@ -1,6 +1,5 @@
 package com.sun.mvvmposts.utils
 
-import android.content.Context
 import android.view.View
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity

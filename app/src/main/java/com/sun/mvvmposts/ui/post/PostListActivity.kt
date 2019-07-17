@@ -1,8 +1,6 @@
 package com.sun.mvvmposts.ui.post
 
 import android.os.Bundle
-import android.view.View
-import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProviders
@@ -11,6 +9,7 @@ import com.google.android.material.snackbar.Snackbar
 import com.sun.mvvmposts.R
 import com.sun.mvvmposts.base.BaseActivity
 import com.sun.mvvmposts.databinding.ActivityPostListBinding
+import com.sun.mvvmposts.injection.ViewModelFactory
 import com.sun.mvvmposts.utils.extension.showError
 import com.sun.mvvmposts.utils.extension.hideError
 import kotlinx.android.synthetic.main.activity_post_list.*
@@ -27,7 +26,7 @@ class PostListActivity: BaseActivity() {
         binding = DataBindingUtil.setContentView(this, R.layout.activity_post_list)
         binding.postList.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
 
-        viewModel = ViewModelProviders.of(this).get(PostListViewModel::class.java)
+        viewModel = ViewModelProviders.of(this, ViewModelFactory(this)).get(PostListViewModel::class.java)
         viewModel.errorMessage.observe(this, Observer {
             errorMessage ->
             if (errorMessage != null) {

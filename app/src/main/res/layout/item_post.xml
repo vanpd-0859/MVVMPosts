@@ -15,9 +15,10 @@
 
     <TextView
             android:id="@+id/post_title"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textStyle="bold"
+            android:text="Title"
             app:mutableText="@{viewModel.getPostTitle()}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -25,9 +26,10 @@
 
     <TextView
             android:id="@+id/post_body"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"
+            android:text="Description"
             app:mutableText="@{viewModel.getPostBody()}"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
