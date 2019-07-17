@@ -6,6 +6,7 @@ import com.sun.mvvmposts.R
 import com.sun.mvvmposts.base.BaseViewModel
 import com.sun.mvvmposts.model.Post
 import com.sun.mvvmposts.network.PostApi
+import com.sun.mvvmposts.utils.extension.async
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
@@ -15,8 +16,7 @@ class PostListViewModel: BaseViewModel() {
     @Inject
     lateinit var postApi: PostApi
 
-    private lateinit var subscription: Disposable
-    val loadingVisibility: MutableLiveData<Int> = MutableLiveData()
+    val loadingVisibility: MutableLiveData<Boolean> = MutableLiveData()
     val errorMessage:MutableLiveData<Int> = MutableLiveData()
     val errorClickListener = View.OnClickListener { loadPosts() }
     val postListAdapter: PostListAdapter = PostListAdapter()
@@ -25,37 +25,33 @@ class PostListViewModel: BaseViewModel() {
         loadPosts()
     }
 
-    override fun onCleared() {
-        super.onCleared()
-        subscription.dispose()
-    }
-
     private fun loadPosts() {
-        subscription = postApi.getPosts()
-            .subscribeOn(Schedulers.io())
-            .observeOn(AndroidSchedulers.mainThread())
-            .doOnSubscribe { onRetrievePostListStart() }
-            .doOnTerminate { onRetrievePostListFinish() }
+        showLoading()
+        val posts = postApi.getPosts()
+            .async()
             .subscribe(
                 { result -> onRetrievePostListSuccess(result) },
                 { onRetrievePostListError() }
             )
+        composite.add(posts)
     }
 
-    private fun onRetrievePostListStart(){
-        loadingVisibility.value = View.VISIBLE
+    private fun showLoading(){
+        loadingVisibility.value = true
         errorMessage.value = null
     }
 
-    private fun onRetrievePostListFinish(){
-        loadingVisibility.value = View.GONE
+    private fun hideLoading(){
+        loadingVisibility.value = false
     }
 
     private fun onRetrievePostListSuccess(postList: List<Post>){
         postListAdapter.updatePostList(postList)
+        hideLoading()
     }
 
     private fun onRetrievePostListError(){
         errorMessage.value = R.string.post_error
+        hideLoading()
     }
 }

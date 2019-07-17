@@ -1,7 +1,7 @@
 package com.sun.mvvmposts.ui.post
 
 import android.os.Bundle
-import androidx.annotation.StringRes
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
@@ -9,12 +9,17 @@ import androidx.lifecycle.ViewModelProviders
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.google.android.material.snackbar.Snackbar
 import com.sun.mvvmposts.R
+import com.sun.mvvmposts.base.BaseActivity
 import com.sun.mvvmposts.databinding.ActivityPostListBinding
+import com.sun.mvvmposts.utils.extension.showError
+import com.sun.mvvmposts.utils.extension.hideError
+import kotlinx.android.synthetic.main.activity_post_list.*
 
-class PostListActivity: AppCompatActivity() {
+
+class PostListActivity: BaseActivity() {
     private lateinit var binding: ActivityPostListBinding
     private lateinit var viewModel: PostListViewModel
-    private var errorSnackbar: Snackbar? = null
+    private var snackbar: Snackbar? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -24,18 +29,14 @@ class PostListActivity: AppCompatActivity() {
 
         viewModel = ViewModelProviders.of(this).get(PostListViewModel::class.java)
         viewModel.errorMessage.observe(this, Observer {
-            errorMessage -> if (errorMessage != null) showError(errorMessage) else hideError()
+            errorMessage ->
+            if (errorMessage != null) {
+                snackbar = content.showError(R.string.post_error,
+                    Pair(R.string.retry, viewModel.errorClickListener))
+            } else {
+                content.hideError(snackbar)
+            }
         })
         binding.viewModel = viewModel
-    }
-
-    private fun showError(@StringRes errorMessage: Int) {
-        errorSnackbar = Snackbar.make(binding.root, errorMessage, Snackbar.LENGTH_INDEFINITE)
-        errorSnackbar?.setAction(R.string.retry, viewModel.errorClickListener)
-        errorSnackbar?.show()
-    }
-
-    private fun hideError() {
-        errorSnackbar?.dismiss()
     }
 }

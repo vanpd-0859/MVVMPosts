@@ -11,11 +11,11 @@ import androidx.recyclerview.widget.RecyclerView
 import com.sun.mvvmposts.utils.extension.getParentActivity
 
 @BindingAdapter("mutableVisibility")
-fun setMutableVisibility(view: View, visibility: MutableLiveData<Int>?) {
+fun setMutableVisibility(view: View, visibility: MutableLiveData<Boolean>?) {
     val parentActivity: AppCompatActivity? = view.getParentActivity()
     if (parentActivity != null && visibility != null) {
         visibility.observe(parentActivity, Observer {
-                value -> view.visibility = value ?: View.VISIBLE
+                value -> view.visibility = if (value) View.VISIBLE else View.GONE
         })
     }
 }

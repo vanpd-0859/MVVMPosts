@@ -1,7 +1,7 @@
 package com.sun.mvvmposts.network
 
 import com.sun.mvvmposts.model.Post
-import io.reactivex.Observable
+import io.reactivex.Single
 import retrofit2.http.GET
 
 /**
@@ -12,5 +12,5 @@ interface PostApi {
      * Get the list of the pots from the API
      */
     @GET("/posts")
-    fun getPosts(): Observable<List<Post>>
+    fun getPosts(): Single<List<Post>>
 }
