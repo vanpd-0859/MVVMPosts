@@ -5,19 +5,19 @@ import com.sun.mvvmposts.base.BaseViewModel
 import com.sun.mvvmposts.model.Post
 
 class PostViewModel: BaseViewModel() {
-    private val postTitle = MutableLiveData<String>()
-    private val postBody = MutableLiveData<String>()
+    private val mPostTitle = MutableLiveData<String>()
+    private val mPostBody = MutableLiveData<String>()
 
     fun bind(post: Post){
-        postTitle.value = post.title
-        postBody.value = post.body
+        mPostTitle.value = post.title
+        mPostBody.value = post.body
     }
 
     fun getPostTitle():MutableLiveData<String>{
-        return postTitle
+        return mPostTitle
     }
 
     fun getPostBody():MutableLiveData<String>{
-        return postBody
+        return mPostBody
     }
 }

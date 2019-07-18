@@ -5,28 +5,29 @@ import android.view.View
 import androidx.annotation.StringRes
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.snackbar.Snackbar
+import com.sun.mvvmposts.R
+import java.net.UnknownHostException
 
 fun View.getParentActivity(): AppCompatActivity? {
-    var context = this.context
-    while (context is ContextWrapper) {
-        if (context is AppCompatActivity) {
-            return context
+    var mContext = this.context
+    while (mContext is ContextWrapper) {
+        if (mContext is AppCompatActivity) {
+            return mContext
         }
-        context = context.baseContext
+        mContext = mContext.baseContext
     }
     return null
 }
 
-fun View.showError(@StringRes errorMessage: Int, action: Pair<Int, View.OnClickListener>?): Snackbar {
-    val snackBar = Snackbar.make(this, errorMessage, Snackbar.LENGTH_INDEFINITE)
+fun View.showError(error: Throwable, action: Pair<Int, View.OnClickListener>?) {
+    val mErrorString = when(error) {
+        is UnknownHostException -> resources.getString(R.string.post_error)
+        else -> error.localizedMessage
+    }
+    val mSnackBar = Snackbar.make(this, mErrorString, Snackbar.LENGTH_INDEFINITE)
     if (action != null) {
         val (resId, listener) = action
-        snackBar.setAction(resId, listener)
+        mSnackBar.setAction(resId, listener)
     }
-    snackBar.show()
-    return snackBar
-}
-
-fun View.hideError(snackbar: Snackbar?) {
-    snackbar?.dismiss()
+    mSnackBar.show()
 }

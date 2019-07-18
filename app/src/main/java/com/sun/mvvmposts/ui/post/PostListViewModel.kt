@@ -7,9 +7,11 @@ import com.sun.mvvmposts.base.BaseViewModel
 import com.sun.mvvmposts.model.Post
 import com.sun.mvvmposts.network.PostApi
 import com.sun.mvvmposts.utils.extension.async
+import com.sun.mvvmposts.utils.extension.loading
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
 import io.reactivex.schedulers.Schedulers
+import java.net.UnknownHostException
 import javax.inject.Inject
 
 class PostListViewModel: BaseViewModel() {
@@ -17,7 +19,7 @@ class PostListViewModel: BaseViewModel() {
     lateinit var postApi: PostApi
 
     val loadingVisibility: MutableLiveData<Boolean> = MutableLiveData()
-    val errorMessage:MutableLiveData<Int> = MutableLiveData()
+    val errorMessage:MutableLiveData<Throwable> = MutableLiveData()
     val errorClickListener = View.OnClickListener { loadPosts() }
     val postListAdapter: PostListAdapter = PostListAdapter()
 
@@ -26,32 +28,18 @@ class PostListViewModel: BaseViewModel() {
     }
 
     private fun loadPosts() {
-        showLoading()
-        val posts = postApi.getPosts()
-            .async()
-            .subscribe(
-                { result -> onRetrievePostListSuccess(result) },
-                { onRetrievePostListError() }
-            )
-        composite.add(posts)
-    }
-
-    private fun showLoading(){
-        loadingVisibility.value = true
-        errorMessage.value = null
-    }
-
-    private fun hideLoading(){
-        loadingVisibility.value = false
-    }
-
-    private fun onRetrievePostListSuccess(postList: List<Post>){
-        postListAdapter.updatePostList(postList)
-        hideLoading()
-    }
-
-    private fun onRetrievePostListError(){
-        errorMessage.value = R.string.post_error
-        hideLoading()
+        rx {
+            postApi.getPosts()
+                .async()
+                .loading(loadingVisibility)
+                .subscribe(
+                    {
+                            postList -> postListAdapter.updatePostList(postList)
+                    },
+                    {
+                            errorMessage.value = it
+                    }
+                )
+        }
     }
 }

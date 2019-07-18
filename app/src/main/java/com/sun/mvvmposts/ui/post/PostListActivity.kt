@@ -12,31 +12,23 @@ import com.sun.mvvmposts.R
 import com.sun.mvvmposts.base.BaseActivity
 import com.sun.mvvmposts.databinding.ActivityPostListBinding
 import com.sun.mvvmposts.utils.extension.showError
-import com.sun.mvvmposts.utils.extension.hideError
 import kotlinx.android.synthetic.main.activity_post_list.*
 
 
 class PostListActivity: BaseActivity() {
-    private lateinit var binding: ActivityPostListBinding
-    private lateinit var viewModel: PostListViewModel
-    private var snackbar: Snackbar? = null
+    private lateinit var mBinding: ActivityPostListBinding
+    private lateinit var mViewModel: PostListViewModel
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        binding = DataBindingUtil.setContentView(this, R.layout.activity_post_list)
-        binding.postList.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
+        mBinding = DataBindingUtil.setContentView(this, R.layout.activity_post_list)
+        mBinding.postList.layoutManager = LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false)
 
-        viewModel = ViewModelProviders.of(this).get(PostListViewModel::class.java)
-        viewModel.errorMessage.observe(this, Observer {
-            errorMessage ->
-            if (errorMessage != null) {
-                snackbar = content.showError(R.string.post_error,
-                    Pair(R.string.retry, viewModel.errorClickListener))
-            } else {
-                content.hideError(snackbar)
-            }
+        mViewModel = ViewModelProviders.of(this).get(PostListViewModel::class.java)
+        mViewModel.errorMessage.observe(this, Observer {
+            errorMessage -> cl_post_list.showError(errorMessage, Pair(R.string.retry, mViewModel.errorClickListener))
         })
-        binding.viewModel = viewModel
+        mBinding.viewModel = mViewModel
     }
 }

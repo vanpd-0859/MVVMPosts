@@ -6,9 +6,10 @@ import com.sun.mvvmposts.injection.component.ViewModelInjector
 import com.sun.mvvmposts.injection.module.NetworkModule
 import com.sun.mvvmposts.ui.post.PostListViewModel
 import io.reactivex.disposables.CompositeDisposable
+import io.reactivex.disposables.Disposable
 
 abstract class BaseViewModel: ViewModel() {
-    var composite = CompositeDisposable()
+    var disposable: CompositeDisposable? = null
 
     private val injector: ViewModelInjector = DaggerViewModelInjector
         .builder()
@@ -17,6 +18,7 @@ abstract class BaseViewModel: ViewModel() {
 
     init {
         inject()
+        disposable = CompositeDisposable()
     }
 
     /**
@@ -30,6 +32,13 @@ abstract class BaseViewModel: ViewModel() {
 
     override fun onCleared() {
         super.onCleared()
-        composite.dispose()
+        disposable?.dispose()
+
+    }
+
+    protected fun rx(block: () -> Disposable?) {
+        if (disposable == null) throw IllegalArgumentException(
+            "No worry! You've just forgot inject disposable, DO IT!")
+        block()?.let { disposable?.add(it) }
     }
 }

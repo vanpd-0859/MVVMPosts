@@ -12,9 +12,9 @@ import com.sun.mvvmposts.utils.extension.getParentActivity
 
 @BindingAdapter("mutableVisibility")
 fun setMutableVisibility(view: View, visibility: MutableLiveData<Boolean>?) {
-    val parentActivity: AppCompatActivity? = view.getParentActivity()
-    if (parentActivity != null && visibility != null) {
-        visibility.observe(parentActivity, Observer {
+    val mParentActivity: AppCompatActivity? = view.getParentActivity()
+    if (mParentActivity != null && visibility != null) {
+        visibility.observe(mParentActivity, Observer {
                 value -> view.visibility = if (value) View.VISIBLE else View.GONE
         })
     }
@@ -22,9 +22,9 @@ fun setMutableVisibility(view: View, visibility: MutableLiveData<Boolean>?) {
 
 @BindingAdapter("mutableText")
 fun setMutableText(view: TextView, text: MutableLiveData<String>?) {
-    val parentActivity:AppCompatActivity? = view.getParentActivity()
-    if (parentActivity != null && text != null) {
-        text.observe(parentActivity, Observer {
+    val mParentActivity: AppCompatActivity? = view.getParentActivity()
+    if (mParentActivity != null && text != null) {
+        text.observe(mParentActivity, Observer {
                 value -> view.text = value ?: ""
         })
     }
